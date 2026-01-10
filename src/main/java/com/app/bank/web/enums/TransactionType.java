@@ -1,0 +1,36 @@
+package com.app.bank.web.enums;
+
+public enum TransactionType {
+
+	DEPOSIT,             
+    ONLINE_DEPOSIT,         
+    CHEQUE_DEPOSIT,         
+    TRANSFER_DEPOSIT,       
+    WITHDRAWAL,           
+    ATM_WITHDRAWAL,       
+    ONLINE_WITHDRAWAL,  
+    TRANSFER,            
+    NEFT_TRANSFER,         
+    RTGS_TRANSFER,          
+    IMPS_TRANSFER,       
+    UPI_TRANSFER,          
+    LOAN_DISBURSEMENT,      
+    LOAN_REPAYMENT,        
+    LOAN_PREPAYMENT,         
+    INTEREST_CREDIT,       
+    INTEREST_DEBIT,            
+    SERVICE_CHARGE,         
+    MAINTENANCE_FEE,     
+    ATM_CHARGE,            
+    TRANSACTION_FEE,          
+    BILL_PAYMENT,        
+    CREDIT_CARD_PAYMENT,    
+    INSURANCE_PAYMENT,       
+    FD_CREATION,           
+    RD_INSTALLMENT,       
+    REFUND,               
+    REVERSAL,                
+    STANDING_INSTRUCTION,   
+    TAX_PAYMENT,           
+    TDS_DEDUCTION
+}
