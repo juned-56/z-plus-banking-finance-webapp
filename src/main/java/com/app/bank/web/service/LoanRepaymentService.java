@@ -57,13 +57,6 @@ public class LoanRepaymentService {
 		return loanRepaymentRepository.findNextDueRepayment(loanId).orElseThrow(() -> 
 		new BankException("No pending repayment found"));
 	}
-//	public LoanRepayment getNextDueRepayment(Long loanId) {
-//	    return loanRepaymentRepository
-//	            .findNextDueRepayment(loanId, PageRequest.of(0, 1))
-//	            .stream()
-//	            .findFirst()
-//	            .orElseThrow(() -> new BankException("No pending EMI found"));
-//	}
 
 	
 	public List<LoanRepayment> getOverduePayments(Long loanId){
@@ -107,47 +100,6 @@ public class LoanRepaymentService {
 	    }
 	}
 
-	
-//	@Transactional
-//	public Map<String, Object> payEmi(Long loanId, BigDecimal amount, String username){
-//		User user = userRepository.findByUsername(username).orElseThrow(() -> 
-//		new BankException("User not found"));
-//		
-//		Loan loan = loanRepository.findById(loanId).orElseThrow(() -> 
-//		new BankException("Loan not found"));
-//		
-//		if(!loan.getUser().getId().equals(user.getId())) {
-//			throw new BankException("Loan does not belong to you");
-//		}
-//		
-//		Account account = loan.getLinkedAccount();
-//		if(account.getBalance().compareTo(amount) < 0) {
-//			throw new BankException("Insufficient balance in linked account");
-//		}
-//		LoanRepayment repayment = loanRepaymentRepository.findNextDueRepayment(loanId).orElseThrow(() -> 
-//		new BankException("No pending EMI found"));
-//		BigDecimal remaningDue = repayment.getDueAmount().subtract(repayment.getPaidAmount());
-//		if(amount.compareTo(remaningDue) >= 0) {
-//			repayment.setPaidAmount(repayment.getPaidAmount());
-//			repayment.setStatus(RepaymentStatus.PAID);
-//		} else {
-//			repayment.setPaidAmount(repayment.getPaidAmount().add(amount));
-//			repayment.setStatus(RepaymentStatus.PARTIALLY_PAID);
-//		}
-//		repayment.setPaymentDate(LocalDate.now());
-//		repayment.setUpdatedAt(LocalDateTime.now());
-//		account.setBalance(account.getBalance().subtract(amount));
-//		accountRepository.save(account);
-//		loanRepaymentRepository.save(repayment);
-//		Map<String, Object> response = new HashMap<>();
-//		response.put("message", "EMI Payment successful");
-//		response.put("installment", repayment.getInstallmentNumber());
-//		response.put("status", repayment.getStatus());
-//		response.put("paid amount", repayment.getPaidAmount());
-//		response.put("remaining due", remaningDue.subtract(amount));
-//		return response;
-//		}
-	
 	
 	@Transactional
 	public Map<String, Object> payEmi(Long loanId, BigDecimal amount, String username) {
@@ -196,7 +148,6 @@ public class LoanRepaymentService {
 	    transaction.setRemarks("Payment Done");
 	    transactionRepository.save(transaction);
 
-	    // ✅ IMPORTANT FIXES
 	    repayment.setPaidAmount(amount);
 	    repayment.setStatus(RepaymentStatus.PAID);
 	    repayment.setPaymentDate(LocalDate.now());
@@ -240,7 +191,6 @@ public class LoanRepaymentService {
 	}
 	
 	
-	//================Helper Method==================
 	public String getRefrenceNumber() {
 		return "REF" + System.currentTimeMillis() + (int)(Math.random() * 1000);
 	}
