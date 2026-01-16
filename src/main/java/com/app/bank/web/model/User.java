@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.app.bank.web.enums.UserRole;
 import com.app.bank.web.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,6 +54,7 @@ public class User {
 	private LocalDateTime createdAt = LocalDateTime.now();
 	private LocalDateTime lastLoginAt;
 	private Integer failedLoginAttempts = 0;
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Account> accounts;
 	@Column(nullable = false, precision = 15, scale = 2)

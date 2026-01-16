@@ -15,21 +15,42 @@ import com.app.bank.web.model.LoanRepayment;
 @Component
 public class LoanCalculator {
 
+//	public Map<String, BigDecimal> calculateEMI(BigDecimal principal, BigDecimal annualRate, int tenureMonths){
+//		BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(1200), 10, RoundingMode.HALF_UP);
+//		BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
+//		BigDecimal power = onePlusR.pow(tenureMonths);
+//		BigDecimal numerator = principal.multiply(monthlyRate).multiply(power);
+//		BigDecimal denominator = power.subtract(BigDecimal.ONE);
+//		BigDecimal emi = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
+//		BigDecimal totalAmount = emi.multiply(BigDecimal.valueOf(tenureMonths));
+//		BigDecimal totalInterest = totalAmount.subtract(principal);
+//		Map<String, BigDecimal> response = new HashMap<>();
+//		response.put("EMI", emi);
+//		response.put("Total", totalAmount);
+//		response.put("Interest", totalInterest);
+//		return response;
+//	}
+	
 	public Map<String, BigDecimal> calculateEMI(BigDecimal principal, BigDecimal annualRate, int tenureMonths){
-		BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(1200), 10, RoundingMode.HALF_UP);
-		BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
-		BigDecimal power = onePlusR.pow(tenureMonths);
-		BigDecimal numerator = principal.multiply(monthlyRate).multiply(power);
-		BigDecimal denominator = power.subtract(BigDecimal.ONE);
-		BigDecimal emi = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
-		BigDecimal totalAmount = emi.multiply(BigDecimal.valueOf(tenureMonths));
-		BigDecimal totalInterest = totalAmount.subtract(principal);
-		Map<String, BigDecimal> response = new HashMap<>();
-		response.put("EMI", emi);
-		response.put("Total", totalAmount);
-		response.put("Interest", totalInterest);
-		return response;
+	    BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(1200), 10, RoundingMode.HALF_UP);
+	    BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
+	    BigDecimal power = onePlusR.pow(tenureMonths);
+
+	    BigDecimal numerator = principal.multiply(monthlyRate).multiply(power);
+	    BigDecimal denominator = power.subtract(BigDecimal.ONE);
+
+	    BigDecimal emi = numerator.divide(denominator, 2, RoundingMode.HALF_UP);
+	    BigDecimal totalAmount = emi.multiply(BigDecimal.valueOf(tenureMonths));
+	    BigDecimal totalInterest = totalAmount.subtract(principal);
+
+	    Map<String, BigDecimal> response = new HashMap<>();
+	    response.put("emi", emi);
+	    response.put("total", totalAmount);
+	    response.put("interest", totalInterest);
+
+	    return response;
 	}
+
 	
 	public List<LoanRepayment> generateRepaymentSchedule(Loan loan){
 		List<LoanRepayment> schedule = new ArrayList<>();

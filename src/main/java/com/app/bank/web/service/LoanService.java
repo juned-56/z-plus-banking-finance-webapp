@@ -31,13 +31,15 @@ public class LoanService {
 	private final LoanRepository loanRepository;
 	private final UserRepository userRepository;
 	private final AccountRepository accountRepository;
+	private final LoanRepaymentService loanRepaymentService;
 	private final LoanCalculator loanCalculator;
 	
 	public LoanService(LoanRepository loanRepository, UserRepository userRepository,
-			AccountRepository accountRepository, LoanCalculator loanCalculator) {
+			AccountRepository accountRepository, LoanRepaymentService loanRepaymentService, LoanCalculator loanCalculator) {
 		this.loanRepository = loanRepository;
 		this.userRepository = userRepository;
 		this.accountRepository = accountRepository;
+		this.loanRepaymentService = loanRepaymentService;
 		this.loanCalculator = loanCalculator;
 	}
 	
@@ -86,6 +88,7 @@ public class LoanService {
 		loan.setApprovedDate(LocalDateTime.now());
 		loan.setApprovedBy(approvedBy);
 		loanRepository.save(loan);
+		loanRepaymentService.generateRepaymentSchedule(loan, approvedBy);
 		return mapToLoanResponse(loan);
 	}
 	
@@ -125,12 +128,25 @@ public class LoanService {
 				.collect(Collectors.toList());
 	}
 	
-	public Page<Loan> getAllLoans(LoanStatus status, Pageable pageable){
-		if(status != null) {
-			return loanRepository.findByStatus(status, pageable);
-		}
-		return loanRepository.findAll(pageable);
+//	public Page<Loan> getAllLoans(LoanStatus status, Pageable pageable){
+//		if(status != null) {
+//			return loanRepository.findByStatus(status, pageable);
+//		}
+//		return loanRepository.findAll(pageable);
+//	}
+	
+	public Page<LoanResponse> getAllLoans(LoanStatus status, Pageable pageable){
+	    Page<Loan> loans;
+
+	    if(status != null) {
+	        loans = loanRepository.findByStatus(status, pageable);
+	    } else {
+	        loans = loanRepository.findAll(pageable);
+	    }
+
+	    return loans.map(this::mapToLoanResponse);
 	}
+
 
 	private boolean isLoanFullyRepaid(Loan loan) {
 		BigDecimal totalPaid = loan.getRepayments().stream()
@@ -162,6 +178,7 @@ public class LoanService {
 		loanResponse.setDisbursementDate(loan.getDisbursementDate());
 		loanResponse.setMaturityDate(loan.getMaturityDate());
 		loanResponse.setCustomerName(loan.getUser().getFirstName() + " " + loan.getUser().getLastName());
+		loanResponse.setCustomerEmail(loan.getUser().getEmail());
 		return loanResponse;
 	}
 

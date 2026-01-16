@@ -44,8 +44,8 @@ public class AccountController {
 		
 		@PostMapping("/{accountNumber}/deposit") // http://localhost:8989/api/v1/auth/{accountNumber}/deposit
 		public ResponseEntity<Map<String, Object>> deposit(@PathVariable String accountNumber, @RequestParam BigDecimal amount,
-				 @RequestParam String description){
-			return ResponseEntity.ok(accountService.deposit(accountNumber, amount, description));
+				 @RequestParam String description, Authentication authentication){
+			return ResponseEntity.ok(accountService.deposit(accountNumber, amount, description, authentication.getName()));
 		}
 		
 		@PostMapping("/{accountNumber}/withdraw") // http://localhost:8989/api/v1/auth/{accountNumber}/withdraw

@@ -120,6 +120,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/v1/auth/create-account").hasAnyRole("ADMIN", "BANK_EMPLOYEE", "BANK_MANAGER")
+                .requestMatchers("/api/v1/auth/*/approve-loan").hasAnyRole("ADMIN", "BANK_MANAGER")
+                .requestMatchers("/api/v1/auth/all-loans").hasAnyRole("ADMIN", "BANK_EMPLOYEE", "BANK_MANAGER")
                 .requestMatchers("/api/v1/public/**").permitAll()
                 .requestMatchers("/api/v1/swagger-ui/**", "/api/v1/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/v1/actuator/health", "/api/v1/actuator/info").permitAll()

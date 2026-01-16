@@ -3,6 +3,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.app.bank.web.enums.RepaymentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,6 +35,7 @@ public class LoanRepayment {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "loan_id", nullable = false)
+    @JsonIgnore
     private Loan loan;
     
     @Column(nullable = false)
@@ -56,7 +59,7 @@ public class LoanRepayment {
     @Column(precision = 15, scale = 2)
     private BigDecimal paidAmount = BigDecimal.ZERO; // Amount actually paid
     
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = true, precision = 15, scale = 2)
     private LocalDate paymentDate; // Actual payment date (if paid)
     
     @Enumerated(EnumType.STRING)

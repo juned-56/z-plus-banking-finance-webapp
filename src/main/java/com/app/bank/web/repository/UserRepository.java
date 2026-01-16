@@ -3,6 +3,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import com.app.bank.web.enums.UserStatus;
+import com.app.bank.web.model.LoanRepayment;
 import com.app.bank.web.model.User;
 
 @Repository

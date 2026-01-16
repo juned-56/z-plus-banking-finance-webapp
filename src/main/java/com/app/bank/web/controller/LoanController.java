@@ -53,10 +53,19 @@ public class LoanController {
 			return ResponseEntity.ok(loanService.getUserLoans(authentication.getName()));
 		}
 		
+//		@GetMapping("/all-loans") // http://localhost:8989/api/v1/auth/all-loans
+//		public ResponseEntity<Page<Loan>> getAllLoans(@RequestParam(required = false) LoanStatus status,
+//				Pageable pageable){
+//			return ResponseEntity.ok(loanService.getAllLoans(status, pageable));
+//		}
+		
 		@GetMapping("/all-loans") // http://localhost:8989/api/v1/auth/all-loans
-		public ResponseEntity<Page<Loan>> getAllLoans(@RequestParam(required = false) LoanStatus status,
-				Pageable pageable){
-			return ResponseEntity.ok(loanService.getAllLoans(status, pageable));
+		public ResponseEntity<Page<LoanResponse>> getAllLoans(
+		        @RequestParam(required = false) LoanStatus status,
+		        Pageable pageable) {
+
+		    return ResponseEntity.ok(loanService.getAllLoans(status, pageable));
 		}
+
 }
 

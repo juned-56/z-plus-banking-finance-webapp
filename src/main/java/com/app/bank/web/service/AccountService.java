@@ -24,228 +24,11 @@ import com.app.bank.web.repository.AccountRepository;
 import com.app.bank.web.repository.TransactionRepository;
 import com.app.bank.web.repository.UserRepository;
 import com.app.bank.web.util.AccountNumberGenerator;
-
 import jakarta.transaction.Transactional;
 
 @Service
 public class AccountService {
 
-//	private final AccountRepository accountRepository;
-//    private final UserRepository userRepository;
-//    private final TransactionRepository transactionRepository;
-//    private final AccountNumberGenerator accountNumberGenerator;
-//    
-//    public AccountService(AccountRepository accountRepository, UserRepository userRepository,
-//    		TransactionRepository transactionRepository, AccountNumberGenerator accountNumberGenerator) {
-//    	this.accountRepository = accountRepository;
-//    	this.userRepository = userRepository;
-//    	this.transactionRepository = transactionRepository;
-//    	this.accountNumberGenerator = accountNumberGenerator;
-//	}
-//    
-//    @Value("${app.transaction.max-withdrawal-limit:50000}")
-//    private BigDecimal maxwithdrawalLimit;
-//    @Value("${app.transaction.min-balance=1000}")
-//    private BigDecimal minBalanace;
-//    
-//    @Transactional
-//    public AccountResponse createAccount(CreateAccountRequest request) {
-//    	User user = userRepository.findById(Long.parseLong(request.getUserId())).orElseThrow(() ->
-//    	new BankException("User Not Found"));
-//    	if(request.getInitialDeposit().compareTo(minBalanace) < 0) {
-//    		throw new BankException("Initial deposit must be atleast: " + minBalanace);
-//    	}
-//    	Account account = new Account();
-//    	account.setAccountNumber(accountNumberGenerator.generate());
-//    	account.setUser(user);
-//    	account.setAccountType(AccountType.valueOf(request.getAccountType()));
-//    	account.setBalance(request.getInitialDeposit());
-//    	account.setStatus(AccountStatus.ACTIVE);
-//    	account.setMinimumBalance(minBalanace);
-//    	accountRepository.save(account);
-//    	createTransaction(null, account, request.getInitialDeposit(), TransactionType.DEPOSIT, "Initial Deposit");
-//    	return mapToAcccountResponse(account);
-//    }
-//    
-//    @Transactional
-//    public Map<String, Object> transferFund(TransactionRequest request, String username){
-//    	User user = userRepository.findByUsername(username).orElseThrow(() -> new BankException("User Not found"));
-//    	Account fromAccount = accountRepository.findByAccountNumber(request.getFromAccountNumber()).orElseThrow(() -> new BankException("From Account Not "
-//    			+ "Found"));
-//    	Account toAccount = accountRepository.findByAccountNumber(request.getToAccountNumber()).orElseThrow(() -> new BankException("To Account Not "
-//    			+ "Found"));
-//    	if(!fromAccount.getUser().getId().equals(user.getId())) {
-//    		throw new BankException("You don't own this Account");
-//    	}
-//    	validateAccountsForTransaction(fromAccount, toAccount);
-//    	validateAmount(request.getAmount());
-////    	if(request.getAmount().compareTo(BigDecimal.valueOf(10000)) > 0) {
-////    		
-////    	}
-//    	if(fromAccount.getBalance().subtract(request.getAmount()).compareTo(fromAccount.getMinimumBalance()) < 0) {
-//    		throw new BankException("Insufficient balance. Minimum balance must be maintained");
-//    	}
-//    	fromAccount.setBalance(fromAccount.getBalance().subtract(request.getAmount()));
-//    	toAccount.setBalance(toAccount.getBalance().add(request.getAmount()));
-//    	fromAccount.setLastTransactionAt(LocalDateTime.now());
-//    	toAccount.setLastTransactionAt(LocalDateTime.now());
-//    	accountRepository.save(fromAccount);
-//    	accountRepository.save(toAccount);
-//    	Transaction debitTransaction = createTransaction(fromAccount, toAccount, request.getAmount(), TransactionType.TRANSFER, "Transfer to " +
-//    	toAccount.getAccountNumber());
-//    	Transaction creditTransaction = createTransaction(fromAccount, toAccount, request.getAmount(), TransactionType.TRANSFER, "Transfer from " +
-//    	    	toAccount.getAccountNumber());
-//    	Map<String, Object> response = new HashMap<>();
-//    	response.put("message", "transfer Successfull");
-//    	response.put("transactionId", debitTransaction.getTransactionId());
-//    	response.put("newBalance", fromAccount.getBalance());
-//    	return response;
-//    }
-//    
-//    @Transactional
-//    public Map<String, Object> deposit(String accountNumber, BigDecimal amount, String description){
-//    	Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new BankException("Account not found"));
-//    	validateAmount(amount);
-//    	account.setBalance(account.getBalance().add(amount));
-//    	account.setLastTransactionAt(LocalDateTime.now());
-//    	accountRepository.save(account);
-//    	Transaction transaction = createTransaction(null, account, amount, TransactionType.DEPOSIT, description);
-//    	Map<String, Object> response = new HashMap<>();
-//    	response.put("message", "Deposite successfull");
-//    	response.put("transactionId", transaction.getTransactionId());
-//    	response.put("newBalance", account.getBalance());
-//    	return response;
-//    }
-//    
-//    @Transactional
-//    public Map<String, Object> withdraw(String accountNumber, BigDecimal amount, String description, String username){
-//    	User user = userRepository.findByUsername(username).orElseThrow(() -> new BankException("User Not Found"));
-//    	Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new BankException("Account Number Not found"));
-//    	if(!account.getUser().equals(user.getId())) {
-//    		throw new BankException("You Don't own this account");
-//    	}
-//    	validateAccountsForTransaction(account, null);
-//    	validateAmount(amount);
-//    	if(amount.compareTo(maxwithdrawalLimit) > 0) {
-//    		throw new BankException("Withdrawal amount exceeds daily limit");
-//    	}
-//    	if(account.getBalance().subtract(amount).compareTo(account.getMinimumBalance()) < 0) {
-//    		throw new BankException("Insufficent balance minimum balance must be maintained!");
-//    	}
-//    	account.setBalance(account.getBalance().subtract(amount));
-//    	account.setLastTransactionAt(LocalDateTime.now());
-//    	accountRepository.save(account);
-//    	Transaction transaction = createTransaction(account, null, amount, TransactionType.WITHDRAWAL, description);
-//    	Map<String, Object> response = new HashMap<>();
-//    	response.put("message", "Withdrawal Successfull");
-//    	response.put("TransactionId", transaction.getTransactionId());
-//    	response.put("newBalance", account.getBalance());
-//    	return response;
-//    }
-//
-//    
-//    public AccountResponse getAccount(String accountNumber, String username) {
-//    	User user = userRepository.findByUsername(username).orElseThrow(() -> new BankException("User not found"));
-//    	Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new BankException("Account not found"));
-//    	if(!account.getUser().equals(user.getId()) && !user.getRole().name().contains("ADMIN") && !user.getRole().name().contains("BANK_EMPLOYEE")) {
-//    		throw new BankException("Access Denied");
-//    	}
-//    	
-//    	return mapToAcccountResponse(account);
-//    }
-//    
-//    
-//    public Page<Transaction> getAccountTransaction(String accountNumber, Pageable pageable){
-//    	return transactionRepository.findByAccountNumber(accountNumber, pageable);
-//    }
-//    
-//    
-//    public List<AccountResponse> getUserAccount(String username){
-//    	User user = userRepository.findByUsername(username).orElseThrow(() -> new BankException("User not found"));
-//    	return accountRepository.findByUserId(user.getId())
-//    			.stream().map(this::mapToAcccountResponse)
-//    			.collect(Collectors.toList());
-//    }
-//    
-//    
-//    public Map<String, Object> getAccountBalance(String accountNumber, String username){
-//    	Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new BankException("Account not found"));
-//    	User user = userRepository.findByUsername(username).orElseThrow(() -> new BankException("User not found"));
-//    	if(!account.getUser().getId().equals(user.getId())) {
-//    		throw new BankException("Access Denied");
-//    	}
-//    	Map<String, Object> response = new HashMap<>();
-//    	response.put("message", account.getAccountNumber());
-//    	response.put("Balance", account.getBalance());
-//    	response.put("Available Balance", account.getBalance().subtract(account.getMinimumBalance()));
-//    	response.put("Currency", "INR");
-//    	response.put("lastUpdated", account.getLastTransactionAt());
-//    	return response;
-//    }
-//	private Transaction createTransaction(Account fromAccount, Account toAccount, 
-//            BigDecimal amount, TransactionType type, String description) {
-//		Transaction transaction = new Transaction();
-//		transaction.setTransactionId(generateTransactionId());
-//		transaction.setFromAccount(fromAccount);
-//		transaction.setToAccount(toAccount);
-//		transaction.setAmount(amount);
-//		transaction.setTransactionType(type);
-//		transaction.setStatus(TransactionStatus.SUCCESS);
-//		transaction.setDescription(description);
-//		transaction.setTransactionDate(LocalDateTime.now());
-//		if(toAccount != null) {
-//			transaction.setBalanceAfterTransaction(toAccount.getBalance());
-//			
-//		}else if(fromAccount != null) {
-//			transaction.setBalanceAfterTransaction(fromAccount.getBalance());
-//		}
-//		return transactionRepository.save(transaction);
-//	}
-//	
-//	private String generateTransactionId() {
-//		return "TXN" + System.currentTimeMillis() + (int) (Math.random() * 1000);
-//	}
-//	
-//	private void validateAccountsForTransaction(Account fromAccount, Account toAccount) {
-//		if(fromAccount != null && !fromAccount.getStatus().equals(AccountStatus.ACTIVE)) {
-//			throw new BankException("from account is not active");
-//		}
-//		if(toAccount != null && !toAccount.getStatus().equals(AccountStatus.ACTIVE)) {
-//			throw new BankException("To Account is not active");
-//		}
-//	}
-//	
-//	private void validateAmount(BigDecimal amount) {
-//		if(amount.compareTo(BigDecimal.ZERO) <= 0) {
-//			throw new BankException("Amount must be greater then zero");
-//		}
-//	}
-//
-//	private AccountResponse mapToAcccountResponse(Account account) {
-//		AccountResponse response = new AccountResponse();
-//		response.setId(account.getId());
-//		response.setAccountNumber(account.getAccountNumber());
-//		response.setAccountType(account.getAccountType().name());
-//		response.setBalance(account.getBalance());
-//		response.setStatus(account.getStatus().name());
-//		response.setCreatedAt(account.getCreatedAt().toString());
-//		response.setCustomerName(account.getUser().getFirstName() + " " + account.getUser().getLastName());
-//		response.setCustomerEmail(account.getUser().getEmail());
-//		return response;
-//	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	private final AccountRepository accountRepository;
     private final UserRepository userRepository;
@@ -335,9 +118,17 @@ public class AccountService {
     }
 
     @Transactional
-    public Map<String, Object> deposit(String accountNumber, BigDecimal amount, String description) {
+    public Map<String, Object> deposit(String accountNumber, BigDecimal amount, String description, String username) {
+    	User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new BankException("User Not Found"));
+    	
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new BankException("Account not found"));
+        
+        if(!account.getUser().getId().equals(user.getId())) {
+        	throw new BankException("You don't own this account");
+        }
+        
         validateAmount(amount);
         account.setBalance(account.getBalance().add(amount));
         account.setLastTransactionAt(LocalDateTime.now());
@@ -450,6 +241,7 @@ public class AccountService {
         transaction.setStatus(TransactionStatus.SUCCESS);
         transaction.setDescription(description);
         transaction.setTransactionDate(LocalDateTime.now());
+        transaction.setReferenceNumber(generateReferenceNumber());
 
         if (toAccount != null) {
             transaction.setBalanceAfterTransaction(toAccount.getBalance());
@@ -463,6 +255,10 @@ public class AccountService {
     private String generateTransactionId() {
         return "TXN" + System.currentTimeMillis() + (int) (Math.random() * 1000);
     }
+    
+    private String generateReferenceNumber() {
+		return "REF" + System.currentTimeMillis() + (int) (Math.random() * 1000);
+	}
 
     private void validateAccountsForTransaction(Account fromAccount, Account toAccount) {
         if (fromAccount != null && !fromAccount.getStatus().equals(AccountStatus.ACTIVE)) {
